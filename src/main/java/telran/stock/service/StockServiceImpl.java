@@ -3,6 +3,7 @@ package telran.stock.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import telran.stock.dao.StockRepository;
 import telran.stock.dto.ItemDto;
@@ -34,14 +35,16 @@ public class StockServiceImpl implements StockService {
 		Item item = repository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
 		return modelMapper.map(item, ItemDto.class);
 	}
-
+	
+	@Transactional
 	@Override
 	public boolean deleteItem(Long itemId) {
 		Item item = repository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
 		repository.delete(item);
 		return true;
 	}
-
+	
+	@Transactional(readOnly = true)
 	@Override
 	public ItemDto depositItem(Long itemId, Integer amount) {
 		Item item = repository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
@@ -49,7 +52,8 @@ public class StockServiceImpl implements StockService {
 		repository.save(item);
 		return modelMapper.map(item, ItemDto.class);
 	}
-
+	
+	@Transactional(readOnly = true)
 	@Override
 	public ItemDto withdrawalItem(Long itemId, Integer amount) {
 		Item item = repository.findById(itemId).orElseThrow(()-> new ItemNotFoundException());
